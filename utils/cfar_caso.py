@@ -1,7 +1,7 @@
 import numpy as np
 from .cfar_caso_range import cfar_caso_range
 
-def cfar_case(dopplerFFtOut):
+def cfar_caso(dopplerFFtOut):
     sig_integrate = np.sum(np.abs(dopplerFFtOut)**2, axis=2) + 1
     angleFFTSize = 128
     angleBinSkipLeft = 4
