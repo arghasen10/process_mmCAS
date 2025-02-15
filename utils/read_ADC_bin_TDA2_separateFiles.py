@@ -3,20 +3,22 @@ import glob
 
 TxToEnable = [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
 RxForMimoProcess = [12,13,14,15,0,1,2,3,8,9,10,11,4,5,6,7]
+
 def read_bin_file(file_full_path, frame_idx, 
                   num_sample_per_chirp, num_chirp_per_loop, 
                   num_loops, num_rx_per_device, num_devices):
+    
     expected_num_samples_per_frame = (num_sample_per_chirp * 
                                       num_chirp_per_loop * 
                                       num_loops * 
-                                      num_rx_per_device * 2)
+                                      num_rx_per_device * 4)
     
     with open(file_full_path, 'rb') as fp:
         # Seek to the frame position
-        fp.seek((frame_idx - 1) * expected_num_samples_per_frame * 2, 0)
+        fp.seek(frame_idx * expected_num_samples_per_frame, 0)
         
         # Read ADC data
-        adc_data = np.fromfile(fp, dtype=np.uint16, count=expected_num_samples_per_frame)
+        adc_data = np.fromfile(fp, dtype=np.int16, count=expected_num_samples_per_frame)
         
     # Convert unsigned to signed (handle two's complement)
     neg = (adc_data & (1 << 15)) != 0  # Check if 16th bit is set
