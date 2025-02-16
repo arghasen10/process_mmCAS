@@ -17,6 +17,6 @@ def dopplerProc(adc_data):
     for i_an in range(num_ant):
         input_mat = np.squeeze(adc_data[:, :, i_an])
         fft_output = np.fft.fft(input_mat, n=dopplerFFTSize, axis=1)
-        np.fft.fftshift(fft_output,1)
+        fft_output = np.fft.fftshift(fft_output,1)
         out[:, :, i_an] = fft_output    
     return out
