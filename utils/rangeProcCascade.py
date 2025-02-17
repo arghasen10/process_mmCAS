@@ -12,7 +12,7 @@ scaleFactorRange  = 1
 def rangeProc(adc_data):
     num_lines = adc_data.shape[1]
     num_ant = adc_data.shape[2]
-    out = np.zeros((rangeFFTSize, num_lines, num_ant), dtype=np.complex_)
+    out = np.zeros((rangeFFTSize, num_lines, num_ant), dtype=np.complex64)
     
     for i_an in range(num_ant):
         hanning_window = np.hanning(numAdcSamplePerChirp)

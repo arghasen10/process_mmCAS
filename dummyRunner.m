@@ -1,9 +1,9 @@
 function main()
     frameIdx = 36;
     frameCountGlobal = frameIdx;
-    if ismac
+    if ismac     % For MAC
         filepath = '/Users/arghasen/Downloads/cascade_cpu_head_1/';
-    elseif ispc
+    elseif ispc  % For Windows 
         filepath = 'C:\ti\mmwave_studio_02_01_01_00\mmWaveStudio\PostProc\cascade_cpu_head_1\';
     end
     masterpath = fullfile(filepath, 'master_0000_data.bin');
@@ -21,8 +21,6 @@ function main()
     rx = [13,14,15,16,1,2,3,4,9,10,11,12,5,6,7,8];
     RxForMIMOProcess = rx;
     radar_data_Rxchain = radar_data_Rxchain(:,:,rx,:); 
-    disp(size(radar_data_Rxchain));
-    disp("final value" + radar_data_Rxchain(1,1,2,1:10));
     rangeFFTSize = 256;
     rangeFFTOut = [];
     DopplerFFTOut = [];
@@ -42,7 +40,6 @@ function main()
     end
     DopplerFFTOut = reshape(DopplerFFTOut,size(DopplerFFTOut,1), size(DopplerFFTOut,2), size(DopplerFFTOut,3)*size(DopplerFFTOut,4));
     sig_integrate = 10*log10(sum((abs(DopplerFFTOut)).^2,3) + 1);
-    
     detection_results = detection(DopplerFFTOut);
     detection_results_all{cnt} =  detection_results;
 
@@ -167,15 +164,11 @@ function main()
     end
             
             
-    disp("DopplerFFTOut size");
-    disp(size(DopplerFFTOut));
     figure;
     d =  abs(sum(DopplerFFTOut,3));
     imagesc(d);
     colormap(jet);
     colorbar;
-    disp(d(1,1:10));
-    disp('Data Loaded');
 end
 
 function [adcData1Complex] = readBinFile(fileFullPath, frameIdx,numSamplePerChirp,numChirpPerLoop,numLoops, numRXPerDevice, numDevices)
@@ -183,17 +176,11 @@ function [adcData1Complex] = readBinFile(fileFullPath, frameIdx,numSamplePerChir
     fp = fopen(fileFullPath, 'r');
     fseek(fp,(frameIdx-1)*Expected_Num_SamplesPerFrame*2, 'bof');
     adcData1 = fread(fp,Expected_Num_SamplesPerFrame,'uint16');
-    disp("After file read: " + adcData1(1:10));
     neg = logical(bitget(adcData1, 16));
-    disp("neg: " + neg(1:10));
     adcData1(neg) = adcData1(neg) - 2^16;
-    disp("After neg operation : " + adcData1(1:10));
     adcData1 = adcData1(1:2:end) + sqrt(-1)*adcData1(2:2:end);
-    disp(adcData1(1:11));
     adcData1Complex = reshape(adcData1, numRXPerDevice, numSamplePerChirp, numChirpPerLoop, numLoops);
     adcData1Complex = permute(adcData1Complex, [2 4 1 3]);
-    disp(size(adcData1Complex));
-    disp("after  " + adcData1Complex(1,1,1,1:11));
     
    %% disp(adcData1Complex(1,1,1,1:11));
     fclose(fp);
@@ -260,6 +247,7 @@ function [detection_results] = detection(input)
     TDM_MIMO_numTX = 12;
     numRxAnt = 16;
     sig_integrate = sum((abs(input)).^2,3) + 1;
+    disp(size(sig_integrate));
     angleFFTSize = 128;
     angleBinSkipLeft = 4;
     angleBinSkipRight = 4;
@@ -494,7 +482,8 @@ function [N_obj, Ind_obj, noise_obj_an] = CFAR_CASO_Doppler_overlap(Ind_obj_Rag,
         end
 
     end
-
+    disp("size(Ind_obj)");
+    disp(size(Ind_obj));
     N_obj = size(Ind_obj,1);
 
     %reset the ref window size to range direction
